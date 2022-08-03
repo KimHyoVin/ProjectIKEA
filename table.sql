@@ -27,7 +27,7 @@ CREATE SEQUENCE PRODUCT_SEQ         START WITH 1 MAXVALUE 999999999 INCREMENT BY
 
 CREATE TABLE PRODUCT (
     PRODUCT_IDX             NUMBER          DEFAULT PRODUCT_SEQ.NEXTVAL PRIMARY KEY,    -- 상품 인덱스
-    PARENT_CATECODE		    CHAR(3)         NOT NULL,   -- 상위 카테고리 코드('101' ~ '999'). 상위 카테고리가 없을 시(최상위 카테고리일 시) -> '000'
+    PARENT_CATECODE         CHAR(3)         NOT NULL,   -- 상위 카테고리 코드('101' ~ '999'). 상위 카테고리가 없을 시(최상위 카테고리일 시) -> '000'
     CATECODE                CHAR(3)         NOT NULL,   -- 카테고리 코드('101' ~ '999')
     PRODUCT_NAME            VARCHAR2(50)    UNIQUE NOT NULL,    -- 상품명
     PRODUCT_DESC            VARCHAR2(2000)  NOT NULL,   -- 상품 설명
@@ -41,7 +41,7 @@ CREATE TABLE PRODUCT (
 );
 
 CREATE TABLE MEMBER (
-	MEMBER_IDX              NUMBER          DEFAULT MEMBER_SEQ.NEXTVAL PRIMARY KEY,     -- 고객 인덱스
+    MEMBER_IDX              NUMBER          DEFAULT MEMBER_SEQ.NEXTVAL PRIMARY KEY,     -- 고객 인덱스
     MEMBER_ID               VARCHAR2(20)    UNIQUE NOT NULL,
     MEMBER_PW               VARCHAR2(20)    NOT NULL,
     MEMBER_NAME             VARCHAR2(20)    NOT NULL,
