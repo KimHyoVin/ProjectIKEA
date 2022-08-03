@@ -1,4 +1,3 @@
--- 8/3 14:32
 DROP SEQUENCE REVIEW_SEQ;
 DROP SEQUENCE IMAGE_SEQ;
 DROP SEQUENCE CART_SEQ;
@@ -27,8 +26,8 @@ CREATE SEQUENCE MEMBER_SEQ          START WITH 1 MAXVALUE 999999999 INCREMENT BY
 CREATE SEQUENCE PRODUCT_SEQ         START WITH 1 MAXVALUE 999999999 INCREMENT BY 1 NOCYCLE NOCACHE;
 
 CREATE TABLE PRODUCT (
-	PRODUCT_IDX             NUMBER          DEFAULT PRODUCT_SEQ.NEXTVAL PRIMARY KEY,    -- 상품 인덱스
-	PARENT_CATECODE		    CHAR(3)         NOT NULL,   -- 상위 카테고리 코드('101' ~ '999'). 상위 카테고리가 없을 시(최상위 카테고리일 시) -> '000'
+    PRODUCT_IDX             NUMBER          DEFAULT PRODUCT_SEQ.NEXTVAL PRIMARY KEY,    -- 상품 인덱스
+    PARENT_CATECODE		    CHAR(3)         NOT NULL,   -- 상위 카테고리 코드('101' ~ '999'). 상위 카테고리가 없을 시(최상위 카테고리일 시) -> '000'
     CATECODE                CHAR(3)         NOT NULL,   -- 카테고리 코드('101' ~ '999')
     PRODUCT_NAME            VARCHAR2(50)    UNIQUE NOT NULL,    -- 상품명
     PRODUCT_DESC            VARCHAR2(2000)  NOT NULL,   -- 상품 설명
