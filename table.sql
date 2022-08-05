@@ -27,14 +27,16 @@ CREATE SEQUENCE PRODUCT_SEQ         START WITH 1 MAXVALUE 999999999 INCREMENT BY
 
 CREATE TABLE PRODUCT (
     PRODUCT_IDX             NUMBER          DEFAULT PRODUCT_SEQ.NEXTVAL PRIMARY KEY,    -- 상품 인덱스
-    PARENT_CATECODE         CHAR(3)         NOT NULL,   -- 상위 카테고리 코드('101' ~ '999'). 상위 카테고리가 없을 시(최상위 카테고리일 시) -> '000'
-    CATECODE                CHAR(3)         NOT NULL,   -- 카테고리 코드('101' ~ '999')
+    CATEGORY1               VARCHAR2(20)    NOT NULL,   -- 카테고리 : 대분류
+    CATEGORY2               VARCHAR2(20)    NOT NULL,   -- 카테고리 : 중분류
+    CATEGORY3               VARCHAR2(20)    NOT NULL,   -- 카테고리 : 소분류
     PRODUCT_NAME            VARCHAR2(50)    UNIQUE NOT NULL,    -- 상품명
     PRODUCT_DESC            VARCHAR2(2000)  NOT NULL,   -- 상품 설명
-    PRODUCT_LENGTH          NUMBER,                     -- 상품 길이
-    PRODUCT_WIDTH           NUMBER,                     -- 상품 너비
-    PRODUCT_HEIGHT          NUMBER,                     -- 상품 높이
-    PRODUCT_COLOR           VARCHAR2(50)    NOT NULL,   -- 상품 색상
+    PRODUCT_LENGTH          NUMBER,                     -- 상품 길이(cm)
+    PRODUCT_WIDTH           NUMBER,                     -- 상품 너비(cm)
+    PRODUCT_HEIGHT          NUMBER,                     -- 상품 높이(cm)
+    PRODUCT_COLOR           VARCHAR2(50),               -- 상품 색상
+    PRODUCT_PRICE           NUMBER          NOT NULL,
     PRODUCT_STOCK           NUMBER          NOT NULL,   -- 상품 재고
     PRODUCT_SALEQUANTITY    NUMBER          DEFAULT 0,  -- 상품 판매량
     PRODUCT_REGDATE         DATE            DEFAULT SYSDATE     -- 상품 등록일
@@ -74,10 +76,9 @@ CREATE TABLE PRODUCT_REVIEW (
 CREATE TABLE PRODUCT_IMAGE (
     IMAGE_IDX               NUMBER          DEFAULT IMAGE_SEQ.NEXTVAL PRIMARY KEY,  -- 상품 이미지 인덱스
     PRODUCT_IDX             NUMBER          NOT NULL,   -- FK : 상품 인덱스
-    IMAGE_ORIGINAL_FILENAME VARCHAR2(50)    NOT NULL,   -- 원래 이미지명
-    IMAGE_NEW_FILENAME      VARCHAR2(50)    NOT NULL,   -- 새로 만들어 준 이미지명
-    IMAGE_FILESIZE          NUMBER          NOT NULL,   -- 파일 크기
-    IMAGE_ISTHUMBNAIL       CHAR(1)         CHECK(IMAGE_ISTHUMBNAIL IN ('Y', 'N')) NOT NULL,    -- 대표 이미지인가? ('Y' OR 'N')
+    IMAGE_FILENAME          VARCHAR2(128)   NOT NULL,   -- 이미지 파일명 (SHA-512를 사용할 경우, 딱 128자)
+    IMAGE_ISTHUMBNAIL1       CHAR(1)         CHECK(IMAGE_ISTHUMBNAIL1 IN ('Y', 'N')) NOT NULL,    -- 1번 대표 이미지인가? ('Y' OR 'N') 
+    IMAGE_ISTHUMBNAIL2       CHAR(1)         CHECK(IMAGE_ISTHUMBNAIL2 IN ('Y', 'N')) NOT NULL,    -- 2번 대표 이미지인가? ('Y' OR 'N') (마우스 오버시 나타나는 대표 이미지)
     IMAGE_REGDATE           DATE            DEFAULT SYSDATE,     -- 이미지 등록일
     
     CONSTRAINT IMAGE_PRODUCT_FK FOREIGN KEY(PRODUCT_IDX) REFERENCES PRODUCT(PRODUCT_IDX) ON DELETE CASCADE
@@ -126,5 +127,27 @@ CREATE TABLE REFUND (
     
     CONSTRAINT REFUND_ORDERS_FK FOREIGN KEY(ORDERS_IDX) REFERENCES ORDERS(ORDERS_IDX) ON DELETE CASCADE
 );
+
+INSERT INTO PRODUCT(CATEGORY1, CATEGORY2, CATEGORY3, PRODUCT_NAME, PRODUCT_DESC, PRODUCT_LENGTH, PRODUCT_WIDTH, PRODUCT_HEIGHT, PRODUCT_COLOR, PRODUCT_PRICE, PRODUCT_STOCK, PRODUCT_SALEQUANTITY)
+    VAlUES('IKEA 여름상품', '정원/가드닝', '식물', 'HIMALAYAMIX 히말라위아믹스 식물', '살아 있는 화초로 자연을 집 안에 들이면 공간이 더 따뜻하고 아늑해지죠. 스트레스를 줄이고 창의력을 북돋아 건강한 생활을 하는 데도 도움이 돼요. 아주 완벽한 룸메이트죠!', '', '', '', '', 5500, 10, 10);
+INSERT INTO PRODUCT_IMAGE(PRODUCT_IDX, IMAGE_FILENAME, IMAGE_ISTHUMBNAIL1, IMAGE_ISTHUMBNAIL2) VALUES (1, 'ImageToStl.com_himalayamix-potted-plant-assorted__0554646_pe659867_s5.jpg', 'Y', 'N');
+
+INSERT INTO PRODUCT(CATEGORY1, CATEGORY2, CATEGORY3, PRODUCT_NAME, PRODUCT_DESC, PRODUCT_LENGTH, PRODUCT_WIDTH, PRODUCT_HEIGHT, PRODUCT_COLOR, PRODUCT_PRICE, PRODUCT_STOCK, PRODUCT_SALEQUANTITY)
+    VAlUES('IKEA 여름상품', '정원/가드닝', '식물', 'SUCCULENT 수쿨렌트', '이 화초는 관리가 쉽고, 물 없이도 오랫동안 살아남을 수 있어요. 원예 솜씨가 뛰어나지 않아도 키울 수 있죠. 화초가 행복지수를 높여주고 집안 분위기를 더욱 활기 있게 해준다는 사실, 알고 계셨나요?', '', '', '', '', 2900, 10, 10);
+INSERT INTO PRODUCT_IMAGE(PRODUCT_IDX, IMAGE_FILENAME, IMAGE_ISTHUMBNAIL1, IMAGE_ISTHUMBNAIL2) VALUES (2, 'succulent-potted-plant-assorted__0523259_pe643699_s5.webp', 'Y', 'N');
+INSERT INTO PRODUCT_IMAGE(PRODUCT_IDX, IMAGE_FILENAME, IMAGE_ISTHUMBNAIL1, IMAGE_ISTHUMBNAIL2) VALUES (2, 'succulent-potted-plant-assorted__0900517_pe697508_s5.jpg', 'N', 'N');
+INSERT INTO PRODUCT_IMAGE(PRODUCT_IDX, IMAGE_FILENAME, IMAGE_ISTHUMBNAIL1, IMAGE_ISTHUMBNAIL2) VALUES (2, 'succulent-potted-plant-assorted__0900656_pe643698_s5.jpg', 'N', 'N');
+INSERT INTO PRODUCT_IMAGE(PRODUCT_IDX, IMAGE_FILENAME, IMAGE_ISTHUMBNAIL1, IMAGE_ISTHUMBNAIL2) VALUES (2, 'succulent-potted-plant-assorted__0900652_pe626419_s5.jpg', 'N', 'N');
+INSERT INTO PRODUCT_IMAGE(PRODUCT_IDX, IMAGE_FILENAME, IMAGE_ISTHUMBNAIL1, IMAGE_ISTHUMBNAIL2) VALUES (2, 'succulent-potted-plant-assorted__0554995_pe660076_s5.webp', 'N', 'Y');
+    
+INSERT INTO PRODUCT(CATEGORY1, CATEGORY2, CATEGORY3, PRODUCT_NAME, PRODUCT_DESC, PRODUCT_LENGTH, PRODUCT_WIDTH, PRODUCT_HEIGHT, PRODUCT_COLOR, PRODUCT_PRICE, PRODUCT_STOCK, PRODUCT_SALEQUANTITY)
+    VAlUES('IKEA 여름상품', '정원/가드닝', '식물', 'KALANCHOE 칼란쇼에', '살아 있는 화초가 집 안에 있으면 분위기가 금세 더 아늑하고 따뜻해져요. 스트레스를 줄이고 창의력을 북돋아 건강에도 유익하다는 사실, 알고 계셨나요? 녹색 식물에는 자연 치유 효과가 있답니다!', '', '', '', '', 3500, 10, 10);
+INSERT INTO PRODUCT_IMAGE(PRODUCT_IDX, IMAGE_FILENAME, IMAGE_ISTHUMBNAIL1, IMAGE_ISTHUMBNAIL2) VALUES (3, 'kalanchoe-potted-plant-flaming-katy-assorted__0554648_pe659869_s5.webp', 'Y', 'N');
+INSERT INTO PRODUCT_IMAGE(PRODUCT_IDX, IMAGE_FILENAME, IMAGE_ISTHUMBNAIL1, IMAGE_ISTHUMBNAIL2) VALUES (3, 'kalanchoe-potted-plant-flaming-katy-assorted__1138991_pe880185_s5.webp', 'N', 'N');
+INSERT INTO PRODUCT_IMAGE(PRODUCT_IDX, IMAGE_FILENAME, IMAGE_ISTHUMBNAIL1, IMAGE_ISTHUMBNAIL2) VALUES (3, 'kalanchoe-potted-plant-flaming-katy-assorted__0554667_pe659890_s5.webp', 'N', 'Y');
+
+INSERT INTO PRODUCT(CATEGORY1, CATEGORY2, CATEGORY3, PRODUCT_NAME, PRODUCT_DESC, PRODUCT_LENGTH, PRODUCT_WIDTH, PRODUCT_HEIGHT, PRODUCT_COLOR, PRODUCT_PRICE, PRODUCT_STOCK, PRODUCT_SALEQUANTITY)
+    VAlUES('IKEA 여름상품', '정원/가드닝', '식물', 'RADERMACHERA 라데르마셰라', '식물과 화분을 이용하여 나만의 스타일로 집을 꾸며보세요.', '', '', '', '', 17900, 10, 10);
+INSERT INTO PRODUCT_IMAGE(PRODUCT_IDX, IMAGE_FILENAME, IMAGE_ISTHUMBNAIL1, IMAGE_ISTHUMBNAIL2) VALUES (4, 'radermachera-potted-plant-china-doll__0554652_pe659872_s5.webp', 'Y', 'N');
 
 COMMIT;
