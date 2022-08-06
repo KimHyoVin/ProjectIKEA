@@ -32,7 +32,7 @@ CREATE TABLE PRODUCT (
     CATEGORY1               VARCHAR2(20)    NOT NULL,   -- 카테고리 : 대분류
     CATEGORY2               VARCHAR2(20)    NOT NULL,   -- 카테고리 : 중분류
     CATEGORY3               VARCHAR2(20)    NOT NULL,   -- 카테고리 : 소분류
-    PRODUCT_NAME            VARCHAR2(100)    UNIQUE NOT NULL,    -- 상품명
+    PRODUCT_NAME            VARCHAR2(100)   UNIQUE NOT NULL,    -- 상품명
     PRODUCT_DESC            VARCHAR2(2000),   			-- 상품 설명
     PRODUCT_LENGTH          NUMBER,                     -- 상품 길이(cm)
     PRODUCT_WIDTH           NUMBER,                     -- 상품 너비(cm)
@@ -63,14 +63,14 @@ CREATE TABLE PRODUCT_REVIEW (
     PRODUCT_IDX             NUMBER          NOT NULL,   -- FK : 상품 인덱스
     PARENT_REVIEW           NUMBER          NOT NULL,   -- 상위 리뷰 인덱스(대댓글 구현을 위함). 상위 리뷰가 없을 시(최상위 리뷰일 시) -> 0
     REVIEW_WRITER           VARCHAR2(20)    NOT NULL,   -- 리뷰 작성자
-    REVIEW_TITLE			VARCHAR2(50)	NOT NULL,	-- 리뷰 제목
+    REVIEW_TITLE            VARCHAR2(50)    NOT NULL,	-- 리뷰 제목
     REVIEW_POINT_ASSEMBLY   NUMBER,   -- 평가 1 : 손쉬운 조립 / 설
     REVIEW_POINT_COSPER     NUMBER,   -- 평가 2 : 제품 가성비
     REVIEW_POINT_QUALITY    NUMBER,   -- 평가 3 : 제품 품질
     REVIEW_POINT_SHAPE      NUMBER,   -- 평가 4 : 제품 외관
     REVIEW_POINT_FUNCTION   NUMBER,   -- 평가 5 : 제품 기능
     REVIEW_CONTENT          VARCHAR2(2000)  NOT NULL,   -- 리뷰 내용
-    REVIEW_RECOMMEND		CHAR(1)			CHECK(REVIEW_RECOMMEND IN ('Y', 'N', 'X')) NOT NULL,	-- 추천 하시겠습니까? ('Y' = 네, 'N' = 아니오, 'X' = 응답없음)
+    REVIEW_RECOMMEND        CHAR(1)         CHECK(REVIEW_RECOMMEND IN ('Y', 'N', 'X')) NOT NULL,	-- 추천 하시겠습니까? ('Y' = 네, 'N' = 아니오, 'X' = 응답없음)
     REVIEW_REGDATE          DATE            DEFAULT SYSDATE,     -- 리뷰 작성일
     
     CONSTRAINT REVIEW_PRODUCT_FK FOREIGN KEY(PRODUCT_IDX) REFERENCES PRODUCT(PRODUCT_IDX) ON DELETE CASCADE
@@ -80,8 +80,8 @@ CREATE TABLE PRODUCT_IMAGE (
     IMAGE_IDX               NUMBER          DEFAULT IMAGE_SEQ.NEXTVAL PRIMARY KEY,  -- 상품 이미지 인덱스
     PRODUCT_IDX             NUMBER          NOT NULL,   -- FK : 상품 인덱스
     IMAGE_FILENAME          VARCHAR2(128)   NOT NULL,   -- 이미지 파일명 (SHA-512를 사용할 경우, 딱 128자)
-    IMAGE_ISTHUMBNAIL1       CHAR(1)         CHECK(IMAGE_ISTHUMBNAIL1 IN ('Y', 'N')) NOT NULL,    -- 1번 대표 이미지인가? ('Y' OR 'N') 
-    IMAGE_ISTHUMBNAIL2       CHAR(1)         CHECK(IMAGE_ISTHUMBNAIL2 IN ('Y', 'N')) NOT NULL,    -- 2번 대표 이미지인가? ('Y' OR 'N') (마우스 오버시 나타나는 대표 이미지)
+    IMAGE_ISTHUMBNAIL1      CHAR(1)         CHECK(IMAGE_ISTHUMBNAIL1 IN ('Y', 'N')) NOT NULL,    -- 1번 대표 이미지인가? ('Y' OR 'N') 
+    IMAGE_ISTHUMBNAIL2      CHAR(1)         CHECK(IMAGE_ISTHUMBNAIL2 IN ('Y', 'N')) NOT NULL,    -- 2번 대표 이미지인가? ('Y' OR 'N') (마우스 오버시 나타나는 대표 이미지)
     IMAGE_REGDATE           DATE            DEFAULT SYSDATE,     -- 이미지 등록일
     
     CONSTRAINT IMAGE_PRODUCT_FK FOREIGN KEY(PRODUCT_IDX) REFERENCES PRODUCT(PRODUCT_IDX) ON DELETE CASCADE
