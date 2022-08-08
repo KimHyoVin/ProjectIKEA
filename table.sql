@@ -42,8 +42,8 @@ CREATE TABLE PRODUCT (
 
 CREATE TABLE MEMBER (
     MEMBER_IDX              NUMBER          DEFAULT MEMBER_SEQ.NEXTVAL PRIMARY KEY,     -- 고객 인덱스
-    MEMBER_EMAIL            VARCHAR2(40)    NOT NULL,  -- ID 역할을  EMAIL이 대신함
-    MEMBER_PW               VARCHAR2(20)    NOT NULL,
+    MEMBER_EMAIL            VARCHAR2(100)    NOT NULL,  -- ID 역할을  EMAIL이 대신함
+    MEMBER_PW               VARCHAR2(40)    NOT NULL,
     MEMBER_NAME             VARCHAR2(20)    NOT NULL,
     MEMBER_BIRTH            DATE            NOT NULL,
     MEMBER_PNUM             VARCHAR2(20)    NOT NULL,   -- 전화번호
