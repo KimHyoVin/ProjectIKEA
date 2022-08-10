@@ -28,8 +28,10 @@ CREATE SEQUENCE PRODUCT_SEQ         START WITH 1 MAXVALUE 999999999 INCREMENT BY
 CREATE TABLE PRODUCT (
     PRODUCT_IDX             NUMBER          DEFAULT PRODUCT_SEQ.NEXTVAL PRIMARY KEY,    -- 상품 인덱스
     PRODUCT_CATEGORY        VARCHAR2(30)    NOT NULL,   -- 최하위 카테고리
-    PRODUCT_NAME            VARCHAR2(100)   NOT NULL,    -- 상품명
-    PRODUCT_DESC            VARCHAR2(2000),   			-- 상품 설명
+    PRODUCT_NAME            VARCHAR2(100)   NOT NULL,   -- 상품명
+    PRODUCT_DESC            VARCHAR2(500),   			-- 상품 상세구성 설명 EX) 침대프레임+침대헤드2 -- (BYTE크기 수정예정)
+    PRODUCT_SUMMARY         VARCHAR2(500),              -- 제품 간단 설명
+    PRODUCT_DETAILS         VARCHAR2(2000),             -- 제품 상세 설명
     PRODUCT_LENGTH          NUMBER,                     -- 상품 길이(cm)
     PRODUCT_WIDTH           NUMBER,                     -- 상품 너비(cm)
     PRODUCT_HEIGHT          NUMBER,                     -- 상품 높이(cm)
