@@ -29,12 +29,12 @@ CREATE TABLE PRODUCT (
     PRODUCT_IDX             NUMBER          DEFAULT PRODUCT_SEQ.NEXTVAL PRIMARY KEY,    -- 상품 인덱스
     PRODUCT_CATEGORY        VARCHAR2(30)    NOT NULL,   -- 최하위 카테고리
     PRODUCT_NAME            VARCHAR2(100)   NOT NULL,   -- 상품명
-    PRODUCT_DESC            VARCHAR2(500),   			-- 상품 상세구성 설명 EX) 침대프레임+침대헤드2 -- (BYTE크기 수정예정)
+    PRODUCT_DESC            VARCHAR2(500),              -- 상품 상세구성 설명 EX) 침대프레임+침대헤드2 -- (BYTE크기 수정예정)
     PRODUCT_SUMMARY         VARCHAR2(500),              -- 제품 간단 설명
     PRODUCT_DETAILS         VARCHAR2(2000),             -- 제품 상세 설명
-    PRODUCT_LENGTH          NUMBER,                     -- 상품 길이(cm)
-    PRODUCT_WIDTH           NUMBER,                     -- 상품 너비(cm)
-    PRODUCT_HEIGHT          NUMBER,                     -- 상품 높이(cm)
+    PRODUCT_LENGTH          NUMBER, -- 상품 길이(cm) (제품 등록 시, 미입력 하면 -> -1)
+    PRODUCT_WIDTH           NUMBER, -- 상품 너비(cm) (-> -1이라면 상세페이지에서 출력하지 말자!)
+    PRODUCT_HEIGHT          NUMBER, -- 상품 높이(cm)
     PRODUCT_COLOR           VARCHAR2(50),               -- 상품 색상
     PRODUCT_PRICE           NUMBER          NOT NULL,
     PRODUCT_STOCK           NUMBER          NOT NULL,   -- 상품 재고
@@ -45,7 +45,7 @@ CREATE TABLE PRODUCT (
 CREATE TABLE MEMBER (
     MEMBER_IDX              NUMBER          DEFAULT MEMBER_SEQ.NEXTVAL PRIMARY KEY,     -- 고객 인덱스
     MEMBER_EMAIL            VARCHAR2(40)    NOT NULL,  -- ID 역할을  EMAIL이 대신함
-    MEMBER_PW               VARCHAR2(20)    NOT NULL,
+    MEMBER_PW               VARCHAR2(200)   NOT NULL,
     MEMBER_NAME             VARCHAR2(20)    NOT NULL,
     MEMBER_BIRTH            DATE            NOT NULL,
     MEMBER_PNUM             VARCHAR2(20)    NOT NULL,   -- 전화번호
@@ -53,7 +53,7 @@ CREATE TABLE MEMBER (
     MEMBER_ADDRESS          VARCHAR2(100)   NOT NULL,   -- 주소
     MEMBER_GENDER           CHAR(1)         CHECK(MEMBER_GENDER IN ('M', 'F', 'X')), -- 성별('M' = 남, 'F' = 여, 'X' = 응답거부) 
     MEMBER_REGDATE          DATE            DEFAULT SYSDATE,   -- 회원 가입일
-    MEMBER_ISDELETED        CHAR(1)          CHECK(MEMBER_ISDELETED IN ('Y', 'N'))   --ISDELETED 즉, 삭제 하였지만 데이터에는 남아있다.
+    MEMBER_ISDELETED        CHAR(1)         DEFAULT 'N' CHECK(MEMBER_ISDELETED IN ('Y', 'N'))    -- ISDELETED = 'Y' -> 삭제 하였지만 데이터에는 남아있다
 );
 
 CREATE TABLE PRODUCT_REVIEW (
@@ -62,7 +62,7 @@ CREATE TABLE PRODUCT_REVIEW (
     PARENT_REVIEW           NUMBER          NOT NULL,   -- 상위 리뷰 인덱스(대댓글 구현을 위함). 상위 리뷰가 없을 시(최상위 리뷰일 시) -> 0
     REVIEW_WRITER           VARCHAR2(20)    NOT NULL,   -- 리뷰 작성자
     REVIEW_TITLE            VARCHAR2(50)    NOT NULL,	-- 리뷰 제목
-    REVIEW_POINT_ASSEMBLY   NUMBER          DEFAULT -1,   -- 평가 1 : 손쉬운 조립 / 설
+    REVIEW_POINT_ASSEMBLY   NUMBER          DEFAULT -1,   -- 평가 1 : 손쉬운 조립 / 설  (해당 항목에 대한 평가가 없을 시 -1 EX) 식물은 조립에 대한 평가가 없다)
     REVIEW_POINT_COSPER     NUMBER          DEFAULT -1,   -- 평가 2 : 제품 가성비
     REVIEW_POINT_QUALITY    NUMBER          DEFAULT -1,   -- 평가 3 : 제품 품질
     REVIEW_POINT_SHAPE      NUMBER          DEFAULT -1,   -- 평가 4 : 제품 외관
@@ -282,24 +282,10 @@ INSERT INTO PRODUCT_REVIEW(REVIEW_PI, PARENT_REVIEW, REVIEW_WRITER, REVIEW_TITLE
 
 COMMIT;
 
--- 댓글관련
-SELECT REVIEW_POINT_COSPER FROM PRODUCT_REVIEW WHERE REVIEW_IDX = 1;  -- 1번 리뷰의 가성비 평가
-SELECT REVIEW_POINT_QUALITY FROM PRODUCT_REVIEW WHERE REVIEW_IDX = 1; -- 1번 리뷰의 퀄리티 평가
-SELECT REVIEW_POINT_SHAPE FROM PRODUCT_REVIEW WHERE REVIEW_IDX = 1;   -- 1번 리뷰의 외관 평가
-SELECT (REVIEW_POINT_COSPER + REVIEW_POINT_QUALITY + REVIEW_POINT_SHAPE) / 3 FROM PRODUCT_REVIEW WHERE REVIEW_IDX = 1; -- 1번 리뷰의 평가 평균점
-
-SELECT COUNT(*) FROM PRODUCT_REVIEW WHERE REVIEW_PI = 1; -- 1번 상품에 대한 리뷰 갯수 3
-
--- 각각의 상품에 대한 항목별 별점 평균
-SELECT REVIEW_PI,
-    AVG(REVIEW_POINT_ASSEMBLY) AS ASSEMBLY_AVG,
-    AVG(REVIEW_POINT_COSPER) AS COSPER_AVG,
-    AVG(REVIEW_POINT_QUALITY) AS QUALITY_AVG,
-    AVG(REVIEW_POINT_SHAPE) AS SHAPE_AVG,
-    AVG(REVIEW_POINT_FUNCTION) AS FUNCTION_AVG
-FROM PRODUCT_REVIEW GROUP BY REVIEW_PI;
-
--- 각각의 상품에 대한 총 별점 평균
-SELECT REVIEW_PI,
-    AVG(REVIEW_POINT_COSPER + REVIEW_POINT_QUALITY + REVIEW_POINT_SHAPE) / 3 AS ALL_AVG
-FROM PRODUCT_REVIEW GROUP BY REVIEW_PI;
+-- 상품 리스트에 썸네일 이미지만 표시
+SELECT PRODUCT.*, PRODUCT_IMAGE.IMAGE_FILENAME
+    FROM PRODUCT 
+    JOIN PRODUCT_IMAGE 
+    ON PRODUCT_IDX = IMAGE_PI
+    WHERE IMAGE_ISTHUMBNAIL1 = 'Y';
+   
